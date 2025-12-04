@@ -164,12 +164,11 @@ export default function CollapsibleSideBar({ handleEditQueryName }: CollapsibleS
           onClick={() => setIsExpanded(!isExpanded)}
         />
 
-        <div className={styles.sidebarWrapper}>
-          <div
-            className={isExpanded ? styles.sideNavExpanded : styles.sideNavCollapsed}
-            aria-label={translations('savedQueriesSidebarLabel')}
-          >
-            <div className={styles.innerContentWrapper}>
+        <div
+          className={`${isExpanded ? styles.sideNavExpanded : styles.sideNavCollapsed} ${styles.sidebarWrapper}`}
+        >
+          {isExpanded && (
+            <>
               <p className={styles.headerTitle}>{translations('savedQueries')}</p>
               <div className={styles.toolbar}>
                 <Search
@@ -193,35 +192,33 @@ export default function CollapsibleSideBar({ handleEditQueryName }: CollapsibleS
               </div>
 
               <div className={styles.sideNavContent}>
-                <div>
-                  {defaultQuery && !searchTerm && (
+                {defaultQuery && !searchTerm && (
+                  <QueryItem
+                    query={defaultQuery}
+                    key={defaultQuery.createdAt}
+                    disabled
+                    isCollapsed={!isExpanded}
+                    handleEditQueryName={handleEditQueryName}
+                    setNotification={setNotification}
+                  />
+                )}
+                <SortableContext
+                  items={filteredSortableQueries.map((query) => query.createdAt)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {filteredSortableQueries.map((query) => (
                     <QueryItem
-                      query={defaultQuery}
-                      key={defaultQuery.createdAt}
-                      disabled
+                      query={query}
+                      key={query.createdAt}
                       isCollapsed={!isExpanded}
                       handleEditQueryName={handleEditQueryName}
                       setNotification={setNotification}
                     />
-                  )}
-                  <SortableContext
-                    items={filteredSortableQueries.map((query) => query.createdAt)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {filteredSortableQueries.map((query) => (
-                      <QueryItem
-                        query={query}
-                        key={query.createdAt}
-                        isCollapsed={!isExpanded}
-                        handleEditQueryName={handleEditQueryName}
-                        setNotification={setNotification}
-                      />
-                    ))}
-                  </SortableContext>
-                </div>
+                  ))}
+                </SortableContext>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
         <DragOverlay>
           {activeQuery ? (
