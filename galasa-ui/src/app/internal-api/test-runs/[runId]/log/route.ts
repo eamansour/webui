@@ -12,10 +12,17 @@ export async function GET(
 ) {
   try {
     const { runId } = await params;
-    const log = await fetchRunDetailLogs(runId);
-    return NextResponse.json({ log });
+    const logStream = await fetchRunDetailLogs(runId);
+
+    // Stream the response body directly to the client without buffering
+    return new Response(logStream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+      },
+    });
   } catch (error) {
-    console.error('Error fetching run log:', error);
-    return NextResponse.json({ error: 'Failed to fetch run log' }, { status: 500 });
+    console.error('Error streaming run log:', error);
+    return NextResponse.json({ error: 'Failed to stream run log' }, { status: 500 });
   }
 }

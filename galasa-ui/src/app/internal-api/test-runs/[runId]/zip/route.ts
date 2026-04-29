@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-import { downloadArtifactFromServer } from '@/actions/runsAction';
+import { downloadArtifactFromServer, fetchRunLog } from '@/actions/runsAction';
 import { ArtifactIndexEntry } from '@/generated/galasaapi';
 import { cleanArtifactPath } from '@/utils/artifacts';
-import { fetchRunDetailLogs, fetchTestArtifacts } from '@/utils/testRuns';
+import { fetchTestArtifacts } from '@/utils/testRuns';
 import JSZip from 'jszip';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -83,10 +83,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ runId
 
   try {
     // 1. Fetch logs and artifacts in parallel
-    const [logs, artifacts] = await Promise.all([
-      fetchRunDetailLogs(runId),
-      fetchTestArtifacts(runId),
-    ]);
+    const [logs, artifacts] = await Promise.all([fetchRunLog(runId), fetchTestArtifacts(runId)]);
 
     // 2. Create and Populate the zip with logs and artifacts
     const zip = new JSZip();

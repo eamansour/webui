@@ -94,11 +94,26 @@ export const getExistingTagObjects = async () => {
   }
 };
 
-export const fetchRunLog = async (runId: string) => {
+export const fetchRunLog = async (runId: string): Promise<string> => {
   try {
-    const runLog = await fetchRunDetailLogs(runId);
-    return runLog;
-  } catch (error: any) {
-    throw new Error(error);
+    const logStream = await fetchRunDetailLogs(runId);
+
+    // Read the entire stream into a string
+    const reader = logStream.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let result = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      result += decoder.decode(value, { stream: true });
+    }
+
+    // Final decode to flush any remaining bytes
+    result += decoder.decode();
+
+    return result;
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch run log');
   }
 };

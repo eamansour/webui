@@ -8,6 +8,8 @@ import { ColumnDefinition } from '../interfaces';
 
 const CLIENT_API_VERSION = '0.48.0';
 
+const API_TIMEOUT = 5 * 60 * 1000;
+
 const COLORS = {
   RED: '#da1e28',
   GREEN: '#24A148',
@@ -182,6 +184,7 @@ const RESULTS_TABLE_PAGE_SIZES = [10, 20, 30, 40, 50];
 const TIME_TO_WAIT_BEFORE_CLOSING_TAG_EDIT_MODAL_MS = 1500;
 
 export {
+  API_TIMEOUT,
   CLIENT_API_VERSION,
   COLORS,
   MAX_DISPLAYABLE_TEST_RUNS,

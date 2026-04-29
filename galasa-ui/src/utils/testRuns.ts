@@ -10,7 +10,11 @@ import {
   RunResults,
   UserData,
 } from '@/generated/galasaapi';
-import { createAuthenticatedApiConfiguration } from '@/utils/api';
+import {
+  createAuthenticatedApiConfiguration,
+  getBearerToken,
+  GALASA_API_SERVER_URL,
+} from '@/utils/api';
 import {
   CLIENT_API_VERSION,
   MAX_DISPLAYABLE_TEST_RUNS,
@@ -247,11 +251,29 @@ export const fetchRunDetailsFromApiServer = async (slug: string) => {
   }
 };
 
-export const fetchRunDetailLogs = async (slug: string) => {
-  const rasApiClient = getRasApiClient();
+export const fetchRunDetailLogs = async (slug: string): Promise<ReadableStream<Uint8Array>> => {
+  // Get the bearer token for authentication
+  const bearerToken = await getBearerToken();
 
-  const rasRunLogsResponse = await rasApiClient.getRasRunLog(slug);
-  return rasRunLogsResponse;
+  // Build the URL and make the request with fetch to get the raw stream
+  const url = `${GALASA_API_SERVER_URL}/ras/runs/${slug}/runlog`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      ClientApiVersion: CLIENT_API_VERSION,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch run log: ${response.statusText}`);
+  }
+
+  if (!response.body) {
+    throw new Error('Response body is not available for streaming');
+  }
+
+  return response.body;
 };
 
 export const fetchTestArtifacts = async (slug: string): Promise<ArtifactIndexEntry[]> => {

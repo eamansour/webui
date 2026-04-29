@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 import { GET } from '@/app/internal-api/test-runs/[runId]/zip/route';
-import { downloadArtifactFromServer } from '@/actions/runsAction';
+import { downloadArtifactFromServer, fetchRunLog } from '@/actions/runsAction';
 import { cleanArtifactPath } from '@/utils/artifacts';
-import { fetchRunDetailLogs, fetchTestArtifacts } from '@/utils/testRuns';
+import { fetchTestArtifacts } from '@/utils/testRuns';
 import { NextRequest } from 'next/server';
 
 // Mock the dependencies
@@ -26,7 +26,7 @@ jest.mock('jszip', () => {
 
 const mockDownloadArtifactFromServer = downloadArtifactFromServer as jest.Mock;
 const mockCleanArtifactPath = cleanArtifactPath as jest.Mock;
-const mockFetchRunDetailLogs = fetchRunDetailLogs as jest.Mock;
+const mockFetchRunLog = fetchRunLog as jest.Mock;
 const mockFetchTestArtifacts = fetchTestArtifacts as jest.Mock;
 
 describe('GET /internal-api/test-runs/[runId]/zip', () => {
@@ -44,7 +44,7 @@ describe('GET /internal-api/test-runs/[runId]/zip', () => {
     const mockArtifactContent = { base64: 'BASE64_MOCK_CONTENT' };
     const mockZipBuffer = Buffer.from('this-is-the-mock-zip-file');
 
-    mockFetchRunDetailLogs.mockResolvedValue(mockLogContent);
+    mockFetchRunLog.mockResolvedValue(mockLogContent);
     mockFetchTestArtifacts.mockResolvedValue(mockArtifacts);
     mockDownloadArtifactFromServer.mockResolvedValue(mockArtifactContent);
     mockCleanArtifactPath.mockImplementation((path: string) => path.replace(/^\//, ''));
@@ -57,7 +57,7 @@ describe('GET /internal-api/test-runs/[runId]/zip', () => {
     const response = await GET(request, context);
 
     // Assert: Verify that all functions are called as expected
-    expect(mockFetchRunDetailLogs).toHaveBeenCalledWith(mockRunId);
+    expect(mockFetchRunLog).toHaveBeenCalledWith(mockRunId);
     expect(mockFetchTestArtifacts).toHaveBeenCalledWith(mockRunId);
     expect(mockDownloadArtifactFromServer).toHaveBeenCalledTimes(2);
     expect(mockDownloadArtifactFromServer).toHaveBeenCalledWith(mockRunId, mockArtifacts[0].path);
@@ -90,7 +90,7 @@ describe('GET /internal-api/test-runs/[runId]/zip', () => {
 
   test('should use a fallback filename if runName is not provided', async () => {
     // Arrange
-    mockFetchRunDetailLogs.mockResolvedValue('');
+    mockFetchRunLog.mockResolvedValue('');
     mockFetchTestArtifacts.mockResolvedValue([]);
     mockGenerateAsync.mockResolvedValue(Buffer.from(''));
 

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 'use client';
+import { fetchWithTimeout } from '@/utils/fetchWithTimeout';
 import BreadCrumb from '@/components/common/BreadCrumb';
 import { Tab, Tabs, TabList, TabPanels, TabPanel, Loading } from '@carbon/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -170,7 +171,7 @@ const TestRunDetails = ({ runId, runDetailsPromise }: TestRunDetailsProps) => {
     setArtifactsError(null);
 
     try {
-      const response = await fetch(`/internal-api/test-runs/${runId}/artifacts`);
+      const response = await fetchWithTimeout(`/internal-api/test-runs/${runId}/artifacts`);
       if (!response.ok) {
         throw new Error(`Failed to fetch artifacts: ${response.statusText}`);
       }
@@ -191,14 +192,55 @@ const TestRunDetails = ({ runId, runDetailsPromise }: TestRunDetailsProps) => {
 
     setLogsLoading(true);
     setLogsError(null);
+    setLogs('');
 
     try {
-      const response = await fetch(`/internal-api/test-runs/${runId}/log`);
+      const response = await fetchWithTimeout(`/internal-api/test-runs/${runId}/log`);
+
       if (!response.ok) {
         throw new Error(`Failed to fetch log: ${response.statusText}`);
       }
-      const data = await response.json();
-      setLogs(data.log);
+
+      // Get the reader from the response body
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
+
+      const decoder = new TextDecoder('utf-8');
+      let accumulatedLog = '';
+      let lastUpdateTime = Date.now();
+
+      // Update every 500ms for progressive display
+      const UPDATE_INTERVAL_MS = 500;
+
+      // Read stream and update progressively
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          // Flush any remaining bytes from decoder
+          const remaining = decoder.decode();
+          if (remaining) {
+            accumulatedLog += remaining;
+          }
+          break;
+        }
+
+        // Decode chunk and append to accumulated log
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedLog += chunk;
+
+        // Throttle updates to reduce re-renders while still showing progress
+        const now = Date.now();
+        if (now - lastUpdateTime >= UPDATE_INTERVAL_MS) {
+          setLogs(accumulatedLog);
+          lastUpdateTime = now;
+        }
+      }
+
+      // Final update with complete content
+      setLogs(accumulatedLog);
       setLogsLoaded(true);
     } catch (err: unknown) {
       console.error('Error loading log:', err);
@@ -311,7 +353,7 @@ const TestRunDetails = ({ runId, runDetailsPromise }: TestRunDetailsProps) => {
     try {
       const url = new URL(`/internal-api/test-runs/${run.runId}/zip`, window.location.origin);
       url.searchParams.append('runName', run.runName);
-      const response = await fetch(url.toString());
+      const response = await fetchWithTimeout(url.toString());
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);

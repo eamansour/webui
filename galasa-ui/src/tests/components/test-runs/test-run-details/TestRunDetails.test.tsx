@@ -676,7 +676,10 @@ describe('TestRunDetails', () => {
       // Verify the correct API endpoint was called
       expect(global.fetch).toHaveBeenCalledTimes(1);
       expect(global.fetch).toHaveBeenCalledWith(
-        `http://localhost/internal-api/test-runs/${runId}/zip?runName=TestRun`
+        `http://localhost/internal-api/test-runs/${runId}/zip?runName=TestRun`,
+        expect.objectContaining({
+          signal: expect.any(AbortSignal),
+        })
       );
 
       expect(handleDownload).toHaveBeenCalledWith(mockBlob, 'TestRun-from-server.zip');
