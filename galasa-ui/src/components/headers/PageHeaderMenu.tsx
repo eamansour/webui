@@ -31,9 +31,9 @@ function PageHeaderMenu({ galasaServiceName }: { galasaServiceName: string }) {
     <HeaderGlobalBar data-testid="header-menu">
       <LanguageSelector />
       <ThemeSelector />
-      <div className={styles.serviceName}>
-        <HeaderName prefix="">{galasaServiceName}</HeaderName>
-      </div>
+      <HeaderName id={styles.serviceName} prefix="">
+        {galasaServiceName}
+      </HeaderName>
       <OverflowMenu
         data-floating-menu-container
         selectorPrimaryFocus={'.optionOne'}

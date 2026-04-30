@@ -5,9 +5,9 @@
  */
 
 @media (max-width: 768px) {
-  .serviceName * {
+  #serviceName {
       display: none;
-      padding: 0 !important;
+      padding: 0;
   }
 }
 
