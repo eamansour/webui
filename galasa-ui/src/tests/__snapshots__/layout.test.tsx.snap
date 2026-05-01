@@ -233,17 +233,14 @@ exports[`Layout renders the web UI layout 1`] = `
                 />
               </span>
             </span>
-            <div
-              class="serviceName"
+            <a
+              class="cds--header__name"
+              id="serviceName"
             >
-              <a
-                class="cds--header__name"
-              >
-                <span>
-                  Galasa Service
-                </span>
-              </a>
-            </div>
+              <span>
+                Galasa Service
+              </span>
+            </a>
             <span
               class="cds--overflow-menu__wrapper"
             >
@@ -555,17 +552,14 @@ exports[`Layout renders the web UI layout 1`] = `
               />
             </span>
           </span>
-          <div
-            class="serviceName"
+          <a
+            class="cds--header__name"
+            id="serviceName"
           >
-            <a
-              class="cds--header__name"
-            >
-              <span>
-                Galasa Service
-              </span>
-            </a>
-          </div>
+            <span>
+              Galasa Service
+            </span>
+          </a>
           <span
             class="cds--overflow-menu__wrapper"
           >
