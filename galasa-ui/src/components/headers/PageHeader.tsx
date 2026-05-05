@@ -46,9 +46,6 @@ export default function PageHeader({ galasaServiceName }: { galasaServiceName: s
           aria-expanded={isSideNavExpanded}
         />
 
-        {/* <Link href={'/'} style={{ paddingLeft: '0.5rem' }}>
-          <Image src={galasaLogo} width={28} height={28} alt="Galasa logo" />
-        </Link> */}
         <HeaderName href="/" prefix="">
           <span className={styles.headerName} aria-label="Header name">
             <Image src={galasaLogo} width={28} height={28} alt="Galasa logo" /> Galasa
