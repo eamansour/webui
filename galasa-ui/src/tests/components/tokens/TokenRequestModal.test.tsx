@@ -125,6 +125,16 @@ describe('Token request modal', () => {
 
     // Then...
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/auth/tokens',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          tokenDescription: 'dummy',
+          tokenLifespanDays: 7,
+        }),
+      })
+    );
     expect(window.location.replace).toHaveBeenCalledWith(redirectUrl);
   });
 
@@ -311,6 +321,16 @@ describe('Token request modal', () => {
 
     // Then...
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/auth/tokens',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          tokenDescription: 'dummy',
+          tokenLifespanDays: 7,
+        }),
+      })
+    );
     expect(window.location.replace).toHaveBeenCalledWith(redirectUrl);
   });
 
