@@ -38,9 +38,7 @@ export default function TokenResponseModal({
 
   return (
     <Modal
-      size="lg"
-      className="padding-x-13"
-      id="token-passiveModal"
+      className={styles.modal}
       open={isOpen}
       passiveModal
       modalHeading={translations('modalHeading')}

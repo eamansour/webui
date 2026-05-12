@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
+/* Uses :global() to access Carbon's global class */
+.modal :global(.cds--modal-container) {
+  max-width: 800px;
+}
+
 #description {
   padding-right: 0px;
   margin-bottom: 0.5rem;
