@@ -12,6 +12,39 @@ import { usePathname, useSearchParams } from 'next/navigation';
 const SESSION_STORAGE_KEY = 'breadCrumbHistory';
 
 /**
+ * Function to check if two routes are the same ignoring the 'tab' query parameter
+ * Prevents duplicate breadcrumbs when switching tabs on the same Test Run page
+ */
+function isSameRouteIgnoringTab(route1: string, route2: string): boolean {
+  if (!route1 || !route2) {
+    return false;
+  }
+
+  const [path1, query1] = route1.split('?');
+  const [path2, query2] = route2.split('?');
+
+  // Different paths = different routes
+  if (path1 !== path2) {
+    return false;
+  }
+
+  // Same path, no queries = same route
+  if (!query1 && !query2) {
+    return true;
+  }
+
+  // Remove 'tab' parameter from both query strings
+  const params1 = new URLSearchParams(query1 || '');
+  const params2 = new URLSearchParams(query2 || '');
+  params1.delete('tab');
+  params2.delete('tab');
+
+  // Compare the remaining parameters
+  const paramsMatch = params1.toString() === params2.toString();
+  return paramsMatch;
+}
+
+/**
  * Custom Hook to manage BreadCrumbs history and save it to the sessionStorage
  *
  * @returns breadCrumbItems - current bread crumb items in the history
@@ -39,7 +72,10 @@ export default function useHistoryBreadCrumbs() {
     // Avoid duplicate items (If the user refreshes the page, it will not add the same item again)
     setItems((prevItems) => {
       const newItems = [...prevItems];
-      if (newItems[newItems.length - 1]?.route !== item.route) {
+      const lastItem = newItems[newItems.length - 1];
+
+      // Check if this is a duplicate, ignoring 'tab' parameter on Test Runs page
+      if (!lastItem || !isSameRouteIgnoringTab(lastItem.route, item.route)) {
         newItems.push(item);
       }
       sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(newItems));
