@@ -7,15 +7,19 @@ import styles from '@/styles/test-runs/TestRunsSearch.module.css';
 import { NotificationType } from '@/utils/types/common';
 import { Search } from '@carbon/react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { TestRunsData } from '@/utils/testRuns';
 import { NOTIFICATION_VISIBLE_MILLISECS } from '@/utils/constants/common';
 import { Button } from '@carbon/react';
 import { InlineNotification } from '@carbon/react';
+import useHistoryBreadCrumbs from '@/hooks/useHistoryBreadCrumbs';
+import { TEST_RUNS } from '@/utils/constants/breadcrumb';
 
 export default function TestRunsSearch() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { pushBreadCrumb } = useHistoryBreadCrumbs();
   const translations = useTranslations('TestRunsDetails');
 
   const [currentSearchInput, setCurrentSearchInput] = useState('');
@@ -45,6 +49,10 @@ export default function TestRunsSearch() {
       });
       setTimeout(() => setSearchNotification(null), NOTIFICATION_VISIBLE_MILLISECS);
     } else if (runs.length === 1) {
+      pushBreadCrumb({
+        ...TEST_RUNS,
+        route: `/test-runs?${searchParams.toString()}`,
+      });
       // Navigate to the test run details page for this run
       const runId = runs[0].runId;
       router.push(`/test-runs/${runId}`);
@@ -55,6 +63,10 @@ export default function TestRunsSearch() {
         const latestTime = new Date(latest.testStructure?.startTime ?? '').getTime();
         const currentTime = new Date(current.testStructure?.startTime ?? '').getTime();
         return currentTime > latestTime ? current : latest;
+      });
+      pushBreadCrumb({
+        ...TEST_RUNS,
+        route: `/test-runs?${searchParams.toString()}`,
       });
       const runId = latestRun.runId;
       router.push(`/test-runs/${runId}`);

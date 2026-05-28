@@ -44,7 +44,6 @@ import {
 } from '@/utils/constants/common';
 import { NotificationType } from '@/utils/types/common';
 import { TreeNodeData } from '@/utils/functions/artifacts';
-import { TEST_RUNS } from '@/utils/constants/breadcrumb';
 import TestRunsSearch from '../TestRunsSearch';
 import { getExistingTagObjects } from '@/actions/runsAction';
 
@@ -56,7 +55,7 @@ interface TestRunDetailsProps {
 // Type the props directly on the function's parameter
 const TestRunDetails = ({ runId, runDetailsPromise }: TestRunDetailsProps) => {
   const translations = useTranslations('TestRunDetails');
-  const { breadCrumbItems, pushBreadCrumb } = useHistoryBreadCrumbs();
+  const { breadCrumbItems } = useHistoryBreadCrumbs();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -263,15 +262,6 @@ const TestRunDetails = ({ runId, runDetailsPromise }: TestRunDetailsProps) => {
     fetchExistingTags();
   }, []);
 
-  useEffect(() => {
-    // If the 'Test Runs' breadcrumb is already in the items, skip.
-    if (breadCrumbItems.length > 1) return;
-    // Push the Test Runs URL to the breadcrumb history.
-    pushBreadCrumb({
-      ...TEST_RUNS,
-      route: `/test-runs?${searchParams.toString()}`,
-    });
-  });
 
   const handleShare = async () => {
     try {
