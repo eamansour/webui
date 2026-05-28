@@ -24,7 +24,7 @@ import styles from '@/styles/test-runs/TestRunsPage.module.css';
 import { TableBodyProps } from '@carbon/react/lib/components/DataTable/TableBody';
 import StatusIndicator from '../../common/StatusIndicator';
 import { SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ErrorPage from '@/app/error/page';
 import { MAX_DISPLAYABLE_TEST_RUNS, RESULTS_TABLE_PAGE_SIZES } from '@/utils/constants/common';
 import { useTranslations } from 'next-intl';
@@ -35,6 +35,8 @@ import { getTimeframeText } from '@/utils/functions/timeFrameText';
 import useResultsTablePageSize from '@/hooks/useResultsTablePageSize';
 import Link from 'next/link';
 import RenderTags from '../test-run-details/RenderTags';
+import useHistoryBreadCrumbs from '@/hooks/useHistoryBreadCrumbs';
+import { TEST_RUNS } from '@/utils/constants/breadcrumb';
 
 interface CustomCellProps {
   header: string;
@@ -67,6 +69,8 @@ export default function TestRunsTable({
   const { formatDate } = useDateTimeFormat();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { pushBreadCrumb } = useHistoryBreadCrumbs();
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -229,6 +233,10 @@ export default function TestRunsTable({
 
   // Navigate to the test run details page using the runId
   const handleRowClick = (runId: string) => {
+    pushBreadCrumb({
+      ...TEST_RUNS,
+      route: `/test-runs?${searchParams.toString()}`,
+    });
     // Navigate to the test run details page
     router.push(`/test-runs/${runId}`);
   };

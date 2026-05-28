@@ -13,7 +13,7 @@ const mockUsersApi = UsersAPIApi as jest.Mock;
 jest.mock('@/generated/galasaapi');
 
 jest.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
+  useTranslations: () => {
     const translations: Record<string, string> = {
       title: 'User Details',
       loggedInAs: 'Currently logged in as:',
@@ -25,7 +25,9 @@ jest.mock('next-intl', () => ({
       errorTitle: 'Something went wrong!',
       errorDescription: 'Please report the problem to your Galasa Ecosystem administrator.',
     };
-    return translations[key] || key;
+    const translationFn = (key: string) => translations[key] || key;
+    translationFn.has = () => true;
+    return translationFn;
   },
 }));
 
