@@ -40,8 +40,7 @@ function BreadCrumb({ breadCrumbItems }: CustomBreadCrumbProps) {
 
   const renderBreadCrumbItems = (items: BreadCrumbProps[]) => {
     return items.map((item) => {
-      const translatedTitle = translations(item.title);
-      const displayText = translatedTitle.startsWith('Breadcrumb.') ? item.title : translatedTitle;
+      const displayText = translations.has(item.title) ? translations(item.title) : item.title;
 
       return (
         <BreadcrumbItem key={item.route} href={item.route}>
@@ -53,8 +52,7 @@ function BreadCrumb({ breadCrumbItems }: CustomBreadCrumbProps) {
 
   const renderOverflowItems = (items: BreadCrumbProps[]) => {
     return items.map((item) => {
-      const translatedTitle = translations(item.title);
-      const displayText = translatedTitle.startsWith('Breadcrumb.') ? item.title : translatedTitle;
+      const displayText = translations.has(item.title) ? translations(item.title) : item.title;
 
       return (
         <OverflowMenuItem
