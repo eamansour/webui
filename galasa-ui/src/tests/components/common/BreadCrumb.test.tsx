@@ -7,10 +7,12 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import BreadCrumb from '@/components/common/BreadCrumb';
 
-// Mock useTranslations hook to return a mock translation function
+// Mock useTranslations hook to return a mock translation function with .has() method
 jest.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
-    return key;
+  useTranslations: () => {
+    const translationFn = (key: string) => key;
+    translationFn.has = () => true;
+    return translationFn;
   },
 }));
 
