@@ -1,25 +1,26 @@
 version: 2
 updates:
-  # Keep npm dependencies up-to-date for the Next.js web UI
   - package-ecosystem: "npm"
     directory: "/galasa-ui"
     schedule:
       interval: "weekly"
 
-  # Keep Gradle dependencies up-to-date (openapi-generator plugin)
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
 
-  # Keep GitHub Actions up-to-date
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
 
-  # Keep the base Docker image up-to-date
   - package-ecosystem: "docker"
     directory: "/dockerfiles"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "devcontainers"
+    directory: "/"
     schedule:
       interval: "weekly"
