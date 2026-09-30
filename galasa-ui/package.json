@@ -37,7 +37,7 @@
     "typescript": "5.8.3"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "16.1.6",
+    "@next/eslint-plugin-next": "16.3.6",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "^14.6.1",
